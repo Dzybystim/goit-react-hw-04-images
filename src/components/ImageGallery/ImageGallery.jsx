@@ -1,4 +1,3 @@
-import React, { Component } from "react";
 import PropTypes from 'prop-types';
 
 import {ImageGalleryRejectedView} from "./ImageGalleryRejectedView/ImageGalleryRejectedView"
@@ -6,20 +5,15 @@ import {ImageGalleryResolvedView} from "./ImageGalleryResolvedView/ImageGalleryR
 import {ImageGalleryPendingView} from "./ImageGalleryPendingView/ImageGalleryPendingView"
 import {ButtonLoadMore} from "components/Button/Button"
 
-export default class ImageGallery extends Component {
+export default function ImageGallery({onClickLoadMore, searchValue, status, error, page}) {
 
   
-loadMore = (event) => {
+const loadMore = (event) => {
     event.preventDefault();
 
-
-    this.props.onClickLoadMore(this.props.page+1)
+    onClickLoadMore(page+1)
 }
 
-
-
-    render() {
-    const {searchValue, error, status} = this.props
 
     if(status==='idle'){
      return
@@ -38,11 +32,11 @@ loadMore = (event) => {
         return <>
        <ImageGalleryResolvedView 
         searchValue={searchValue} />
-        <ButtonLoadMore onClick={this.loadMore} />
+        <ButtonLoadMore onClick={loadMore} />
         </>
     }
 
- }
+ 
 } 
 
 
