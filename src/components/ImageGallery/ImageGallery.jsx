@@ -5,7 +5,7 @@ import {ImageGalleryResolvedView} from "./ImageGalleryResolvedView/ImageGalleryR
 import {ImageGalleryPendingView} from "./ImageGalleryPendingView/ImageGalleryPendingView"
 import {ButtonLoadMore} from "components/Button/Button"
 
-export default function ImageGallery({onClickLoadMore, searchValue, status, error, page}) {
+export default function ImageGallery({onClickLoadMore, searchValue, pending, pageTotal, error, page}) {
 
   
 const loadMore = (event) => {
@@ -14,27 +14,15 @@ const loadMore = (event) => {
     onClickLoadMore(page+1)
 }
 
-
-    if(status==='idle'){
-     return
-    }
-
-    if(status==='pending'){
-        return <ImageGalleryPendingView />
-    }
-
-    if(status==='rejected'){
-        return <ImageGalleryRejectedView 
-        message={error.message} />
-    }
-
-    if(status==='resolved'){
-        return <>
-       <ImageGalleryResolvedView 
-        searchValue={searchValue} />
-        <ButtonLoadMore onClick={loadMore} />
+return ( <>
+    {pending && <ImageGalleryPendingView />}
+    {error && <ImageGalleryRejectedView message={error.message} />}
+       
+    <ImageGalleryResolvedView searchValue={searchValue} />
+    {pageTotal && <ButtonLoadMore onClick={loadMore} />}
         </>
-    }
+        )
+
 
  
 } 
@@ -44,6 +32,6 @@ ImageGallery.propTypes = {
     onClickLoadMore: PropTypes.func.isRequired,
     page: PropTypes.number.isRequired,
     searchValue: PropTypes.array.isRequired,
-    status: PropTypes.string.isRequired
-
+    pending: PropTypes.bool.isRequired,
+    pageTotal: PropTypes.isRequired
 }

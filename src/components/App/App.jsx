@@ -14,9 +14,10 @@ export default function App()  {
   let [search, setSearch] = useState(null)
   let [page, setPage] = useState(1)
   let [searchValue, setSearchValue] = useState([])
-  let [status, setStatus] = useState('idle')
   let [error, setError] = useState(null)
-
+  let [pending, setPending] = useState(false)
+  let [pageTotal, setpageTotal] = useState(false)
+  
 
 ////////////////Получаем данные с инпута и записываем в search
 const onSubmit = (searchInitial, pageInitial, searchValueInitial) => {
@@ -32,29 +33,30 @@ const onClickLoadMore = (page) => {
 
 useEffect(() => {
   if(search){
-  setStatus('pending')
+    setPending(true)
+  
 
   pixabayApi(search, page)
   .then(data => {
     const total = data.totalHits
     const totalPage = total/12
-  
+
+    setpageTotal(totalPage>page)
+
     if(data.hits.length===0){
       return Promise.reject(new Error('По вашему запросу ничего не найдено'))}
 
     if(page>=totalPage) {
       setSearchValue(prevent => [...prevent, ...data.hits])
-      setStatus('resolved')
-
+      setPending(false)
       return toast.warn('Фото по вашему запросу больше нет') }
 
       setSearchValue(prevent => [...prevent, ...data.hits])
-      setStatus('resolved')
+      setPending(false)
   }
     )
   .catch(error => {
     setError(error);
-    setStatus('rejected');
   })
   }
   return
@@ -67,7 +69,8 @@ useEffect(() => {
       <ImageGallery 
       onClickLoadMore={onClickLoadMore} 
       searchValue={searchValue}
-      status={status}
+      pending={pending}
+      pageTotal={pageTotal}
       error={error}
       page={page}
       />
